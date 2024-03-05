@@ -1,4 +1,4 @@
-import express from "express"; 
+import express from 'express'
 const router = express.Router()
 
 // Tableau de films (à titre d'exemple)
@@ -11,7 +11,7 @@ const films = [
 
 // Route pour obtenir la liste des films
 router.get('/films', (req, res) => {
-    res.json(films);
+    res.render('films', {films});
 });
 
 // Route pour obtenir un film par son ID
@@ -25,21 +25,41 @@ router.get('/films/:id', (req, res) => {
     }
 });
 
+router.get('/addfilm', (req, res) => {
+    res.render('addfilm')
+})
+
+router.get('/remove', (req, res) => {
+    res.render('remove')
+})
+
 router.post('/films', (req, res) => {
     const film = {
-        id : film.length + 1,
-        title: req.body.title
+        id : films.length + 1,
+        title: req.body.title,
+        director: req.body.director
     }
-    film.push (film)
-    res.send(films)
+    films.push (film)
+    res.render('films', {films})
 })
 
-router.delete('/films/:id', (req, res) => {
+router.post('/removefilms', (req, res) => {
+    const { id } = req.body;
+    const index = films.findIndex(film => film.id === parseInt(id));
+
+    if (index !== -1) {
+        films.splice(index, 1);
+        res.render('films', {films})
+    } else {
+        res.status(404).json({ message: 'Film non trouvé' });
+    }
+})
+
+router.put('/films/:id', (req, res) => {
     let {id} = req.params
-    const film = films.find(e => e.id === parseInt(id))
-    const index = films.indexOf(movie)
-    films.splice(index, 1)
-    res.send('Le film a été supprimé')
+    const film = movie.find(e => e.id === parseInt(id))
+    film.title = req.body.title
+    res.send(film)
 })
 
-export default router
+export default router;
